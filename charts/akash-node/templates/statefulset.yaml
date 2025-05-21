@@ -3,18 +3,16 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: akash-node-1
+  name: akash-node
   namespace: {{ .Release.Namespace }}
   labels:
     app: akash-node
-    akash.network/node: "1"
 spec:
-  replicas: 1
-  serviceName: {{ include "akash-node.fullname" . }}
+  replicas: {{ .Values.replicas }}
+  serviceName: akash-node
   selector:
     matchLabels:
       app: akash-node
-      akash.network/node: "1"
   template:
     metadata:
     {{- with .Values.podAnnotations }}
@@ -23,7 +21,6 @@ spec:
     {{- end }}
       labels:
         app: akash-node
-        akash.network/node: "1"
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -45,7 +42,9 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: AKASH_MONIKER
-              value: {{ .Values.akash_node.moniker }}-1
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
             - name: AKASH_NET
               value: {{ .Values.akash_node.net }}
             - name: AKASH_HOME
@@ -132,7 +131,9 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: AKASH_MONIKER
-              value: {{ .Values.akash_node.moniker }}-1
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
             - name: AKASH_NET
               value: {{ .Values.akash_node.net }}
             - name: AKASH_HOME
