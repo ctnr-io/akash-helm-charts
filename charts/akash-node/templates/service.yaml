@@ -7,8 +7,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   type: ClusterIP
-  # For headless service, if I need it for provider, will see
-  # clusterIP: None
+  clusterIP: None
   ports:
     - port: 1317
       name: akashd-api

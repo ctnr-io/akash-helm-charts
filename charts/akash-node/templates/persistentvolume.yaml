@@ -1,24 +1,27 @@
 {{- if .Values.local_storage.enabled -}}
+{{- $replicas := int .Values.replicas | default 1 -}}
+{{- range $i := until $replicas }}
+---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: local-storage
+  name: akash-node-local-storage-{{ $i }}
 spec:
   capacity:
     storage: {{ $.Values.local_storage.capacity }}
   volumeMode: Filesystem
   accessModes:
   - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Delete
-  storageClassName: local-storage
+  persistentVolumeReclaimPolicy: {{ $.Values.local_storage.policy }}
+  storageClassName: akash-node-local-storage
   local:
-    path: {{ $.Values.local_storage.path }}
+    path: {{ $.Values.local_storage.path }}/akash-node-{{ $i }}
   nodeAffinity:
     required:
       nodeSelectorTerms:
       - matchExpressions:
         - key: kubernetes.io/hostname
           operator: In
-          values:
-          - {{ $.Values.local_storage.host }}
+          values: [{{join ", " $.Values.local_storage.hosts }}]
+{{- end }}
 {{- end }}

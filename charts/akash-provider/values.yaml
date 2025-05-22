@@ -6,12 +6,14 @@ image:
   repository: ghcr.io/akash-network/provider
   pullPolicy: IfNotPresent
 
+replicas: 1
 from:
 key:
 keysecret:
 chainid: akashnet-2
 domain:
 home: "/root/.akash"
+# node: http://akash-node-$(POD_INDEX).akash-node:26657 per default ?
 node: "https://akash-rpc.polkachu.com:443"
 keyringbackend: "test"
 
