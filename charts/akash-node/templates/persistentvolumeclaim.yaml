@@ -17,7 +17,7 @@ metadata:
   name: akash-node-pvc
 spec:
   accessModes:
-  - ReadWriteOnce
+  - {{ $.Values.ceph_storage.access_mode }}
   storageClassName: {{ $.Values.ceph_storage.storageclass }}
   resources:
     requests:

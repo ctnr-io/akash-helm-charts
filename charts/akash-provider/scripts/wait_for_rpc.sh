@@ -11,7 +11,7 @@ test -e /etc/ssl/certs/ca-certificates.crt || exit 1
 
 solo_ip=$(echo $AKASH_NODE | cut -d":" -f2 | cut -d"/" -f3)
 port=$(echo $AKASH_NODE | cut -d":" -f3 | cut -d"/" -f1)
-if [[ $AKASH_NODE != "http://akash-node-1:26657" ]]; then
+if [[ $AKASH_NODE != "http://akash-node-$POD_INDEX.akash-node:26657" ]]; then
   nc -z -v -w5 $solo_ip $port
 fi
 until [[ $(curl -s $AKASH_NODE/status | jq -r .result.sync_info.catching_up) == "false" ]]; do sleep 15; echo "Akash node not ready. Retrying";  done

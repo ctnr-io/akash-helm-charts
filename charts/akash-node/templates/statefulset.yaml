@@ -29,10 +29,6 @@ spec:
       serviceAccountName: akash-node
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      {{- if .Values.local_storage.enabled }}
-      nodeSelector:
-        kubernetes.io/hostname: {{ $.Values.local_storage.host }}
-      {{- end }}
       initContainers:
         - name: init
           securityContext:
@@ -41,10 +37,12 @@ spec:
           command: [ "/bin/bash" , "/config/init.sh" ]
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            - name: AKASH_MONIKER
+            - name: POD_INDEX
               valueFrom:
                 fieldRef:
-                  fieldPath: metadata.name
+                  fieldPath: metadata.labels['apps.kubernetes.io/pod-index'] 
+            - name: AKASH_MONIKER
+              value: {{ .Values.akash_node.moniker }}-$(POD_INDEX)
             - name: AKASH_NET
               value: {{ .Values.akash_node.net }}
             - name: AKASH_HOME
@@ -130,10 +128,12 @@ spec:
           command: [ "/bin/akash" , "start" ]
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            - name: AKASH_MONIKER
+            - name: POD_INDEX
               valueFrom:
                 fieldRef:
-                  fieldPath: metadata.name
+                  fieldPath: metadata.labels['apps.kubernetes.io/pod-index'] 
+            - name: AKASH_MONIKER
+              value: {{ .Values.akash_node.moniker }}-$(POD_INDEX)
             - name: AKASH_NET
               value: {{ .Values.akash_node.net }}
             - name: AKASH_HOME
@@ -240,6 +240,8 @@ spec:
         - name: local-persistent-storage
           persistentVolumeClaim:
             claimName: akash-node-pvc
+            accessModes:
+              - ReadWriteMany
       {{- else }}
         - name: home
           emptyDir: {}

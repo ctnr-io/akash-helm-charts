@@ -7,7 +7,7 @@ metadata:
     app: {{ include "provider.fullname" . }}
     {{- include "provider.labels" . | nindent 4 }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicas }}
   #strategy:
   #  type: OnDelete
   serviceName: {{ include "provider.fullname" . }}
@@ -40,6 +40,10 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
+            - name: POD_INDEX
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['apps.kubernetes.io/pod-index']
             - name: AKASH_DEBUG
               value: "{{ $.Values.debug }}"
             - name: AP_YES
@@ -102,6 +106,10 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
+            - name: POD_INDEX
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['apps.kubernetes.io/pod-index']
             - name: AKASH_DEBUG
               value: "{{ $.Values.debug }}"
             ##

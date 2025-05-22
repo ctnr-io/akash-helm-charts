@@ -55,8 +55,10 @@ snapshots:
 local_storage:
   enabled: false
   capacity: 100Gi
-  path: /mnt/local-storage
-  host: k8s-node-0
+  path: /mnt/akash-node-local-storage
+  hosts:
+    - k8s-node-0
+  policy: Delete
 
 # Same as local_storage except that it uses block storage pool
 # NOTE: you cannot enable both local_storage and ceph_storage at the same time!
@@ -64,6 +66,7 @@ ceph_storage:
   enabled: false
   capacity: 100Gi
   storageclass: akash-nodes
+  access_mode: ReadWriteOnce
 
 imagePullSecrets: []
 nameOverride: ""
