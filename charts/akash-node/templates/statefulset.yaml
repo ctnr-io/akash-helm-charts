@@ -241,7 +241,7 @@ spec:
           persistentVolumeClaim:
             claimName: akash-node-pvc
             accessModes:
-              - ReadWriteMany
+              - ReadWriteOnce
       {{- else }}
         - name: home
           emptyDir: {}
